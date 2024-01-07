@@ -33,10 +33,6 @@ public class User implements UserDetails {
 
     @Column(length = 1024)
     private String contact;
-    public void setPass(String pass) {
-        this.pass = new BCryptPasswordEncoder().encode(pass);
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
