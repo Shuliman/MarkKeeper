@@ -1,6 +1,7 @@
 package com.example.fulbrincjava.entities;
 
 import jakarta.persistence.*;
+import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@Accessors(chain = true)
 @Getter
 @Setter
 public class User implements UserDetails {
