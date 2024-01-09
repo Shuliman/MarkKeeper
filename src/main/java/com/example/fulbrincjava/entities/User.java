@@ -3,7 +3,6 @@ package com.example.fulbrincjava.entities;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import lombok.Setter;
 import lombok.Getter;
 
