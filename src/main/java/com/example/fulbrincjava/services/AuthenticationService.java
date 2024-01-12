@@ -32,7 +32,7 @@ public class AuthenticationService {
         var user = new User()
                 .setLogin(input.getLogin())
                 .setEmail(input.getEmail())
-                .setPass(passwordEncoder.encode(input.getPassword()));
+                .setPassword(passwordEncoder.encode(input.getPassword()));
 
         return userRepository.save(user);
     }

@@ -24,7 +24,7 @@ public class User implements UserDetails {
     private String login;
 
     @Column(nullable = false)
-    private String pass;
+    private String password;
 
     @Column(length = 1024)
     private String email;
@@ -40,7 +40,7 @@ public class User implements UserDetails {
     }
 
     public String getPassword() {
-        return pass;
+        return password;
     }
 
     @Override
