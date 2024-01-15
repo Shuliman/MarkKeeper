@@ -16,10 +16,12 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @Column(nullable = false)
-    private Long userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
+    private User userId;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String title;
