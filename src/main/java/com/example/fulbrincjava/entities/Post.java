@@ -21,7 +21,7 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
-    private User userId;
+    private User user;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String title;
