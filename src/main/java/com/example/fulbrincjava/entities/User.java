@@ -34,6 +34,9 @@ public class User implements UserDetails {
 
     @Column(length = 1024)
     private String contact;
+
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
