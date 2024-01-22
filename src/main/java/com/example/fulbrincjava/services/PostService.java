@@ -8,7 +8,6 @@ import com.example.fulbrincjava.exceptions.UserNotFoundException;
 import com.example.fulbrincjava.repositories.PostRepository;
 import com.example.fulbrincjava.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,12 +19,24 @@ public class PostService {
 
     @Autowired
     private PostRepository postRepository;
+    private final UserRepository userRepository;
     private final UserService userService;
 
     @Autowired
-    public PostService(PostRepository postRepository, UserService userService) {
+    public PostService(PostRepository postRepository, UserService userService, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.userService = userService;
+        this.userRepository = userRepository;
+    }
+    //TODO move to self service
+    private Post convertToEntity(PostDTO postDto) {
+        Post post = new Post();
+        post.setTitle(postDto.getTitle());
+        post.setDescription(postDto.getDescription());
+        User user = userRepository.findById(Math.toIntExact(postDto.getUserId()))
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + postDto.getUserId()));
+        post.setUser(user);
+        return post;
     }
 
     public List<PostDTO> getPostsByCurrentUser() {
@@ -37,6 +48,7 @@ public class PostService {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
+    //TODO move to self service
     private PostDTO convertToDto(Post post) {
         PostDTO postDto = new PostDTO();
         postDto.setId(post.getId());
@@ -45,33 +57,41 @@ public class PostService {
         postDto.setUserId(post.getUser().getId());
         return postDto;
     }
-    public Post getPostById(Long id) {
-        return postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException("Post not found"));
+    public PostDTO getPostById(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException("Post not found with id " + id));
+        return convertToDto(post);
     }
 
-    // Creates a new post
-    public Post createPost(Post post) {
-        // TODO: Add business logic here if any
-        return postRepository.save(post);
+    public PostDTO createPost(PostDTO postDto) {
+        User user = userService.getCurrentUser()
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        postDto.setUserId(user.getId());
+        Post post = convertToEntity(postDto);
+        Post savedPost = postRepository.save(post);
+        return convertToDto(savedPost);
     }
 
-    public Post updatePost(Post postDetails) {
-        Optional<Post> post = postRepository.findById(postDetails.getId());
-        if(post.isEmpty()){
-            throw new PostNotFoundException("Post not found");
-        }
-        Post existingPost = post.get();
-        existingPost.setTitle(postDetails.getTitle());
-        existingPost.setDescription(postDetails.getDescription());
-        return postRepository.save(existingPost);
+
+
+    public PostDTO updatePost(Long id, PostDTO postDto) {
+        Post postUpdate = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found with id " + id));
+
+        postUpdate.setTitle(postDto.getTitle());
+        postUpdate.setDescription(postDto.getDescription());
+
+        Post updatedPost = postRepository.save(postUpdate);
+
+        PostDTO updatedPostDto = convertToDto(updatedPost);
+
+        return updatedPostDto;
     }
 
     public void deletePost(Long id) {
-        Optional<Post> post = postRepository.findById(id);
-        if(post.isEmpty()){
+        if(!postRepository.existsById(id)){
             throw new PostNotFoundException("Post not found");
         }
-        postRepository.delete(post.get());
+        postRepository.deleteById(id);
     }
 }
