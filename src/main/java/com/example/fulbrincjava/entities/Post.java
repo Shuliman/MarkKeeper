@@ -1,9 +1,12 @@
 package com.example.fulbrincjava.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -18,7 +21,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
     private User user;
@@ -30,10 +33,12 @@ public class Post {
     private String description;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     @Column(nullable = false)
     private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
     @Column(nullable = false)
     private Date updatedAt;
     @PrePersist
