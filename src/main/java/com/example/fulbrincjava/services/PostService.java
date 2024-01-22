@@ -83,9 +83,7 @@ public class PostService {
 
         Post updatedPost = postRepository.save(postUpdate);
 
-        PostDTO updatedPostDto = convertToDto(updatedPost);
-
-        return updatedPostDto;
+        return convertToDto(updatedPost);
     }
 
     public void deletePost(Long id) {
