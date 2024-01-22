@@ -1,5 +1,6 @@
 package com.example.fulbrincjava.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,6 +36,7 @@ public class User implements UserDetails {
     @Column(length = 1024)
     private String contact;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Post> posts;
     @Override
