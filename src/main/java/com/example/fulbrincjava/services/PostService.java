@@ -17,8 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class PostService {
 
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final UserService userService;
 
