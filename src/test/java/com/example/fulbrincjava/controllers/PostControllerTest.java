@@ -65,9 +65,10 @@ public class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(postJson))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.title").value("Test Title"));
+                .andExpect(jsonPath("$.title").value("Test Title"))
+                .andExpect(jsonPath("$.description").value("Test Description"))
+                .andExpect(jsonPath("$.id").value(1L));
     }
-
 
     @Test
     public void shouldGetExistingPost() throws Exception {
