@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -115,4 +116,18 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$.title").value("Updated Title"))
                 .andExpect(jsonPath("$.description").value("Updated Description"));
     }
+    @Test
+    public void shouldDeletePost() throws Exception {
+        // Prepare: Mocks the service to delete the post.
+        // Does not return a value, so just make sure the method was called.
+        doNothing().when(postService).deletePost(existingPost.getId());
+
+        // Execute: Send a request to delete the post and check the result.
+        mockMvc.perform(delete("/posts/{id}", existingPost.getId()))
+                .andExpect(status().isOk());
+
+        // Check id and times of invoke
+        verify(postService, times(1)).deletePost(existingPost.getId());
+    }
+
 }
