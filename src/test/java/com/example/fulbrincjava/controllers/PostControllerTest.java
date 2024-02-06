@@ -20,9 +20,9 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,8 +58,14 @@ public class PostControllerTest {
         // Setting up service mocking for createPost and getPostById
         given(postService.createPost(any(PostDTO.class))).willReturn(existingPostDTO);
         given(postService.getPostById(existingPost.getId())).willReturn(existingPostDTO);
-    }
 
+        PostDTO updatedPostDTO = new PostDTO();
+        updatedPostDTO.setId(1L);
+        updatedPostDTO.setTitle("Updated Title");
+        updatedPostDTO.setDescription("Updated Description");
+
+        given(postService.updatePost(eq(1L), any(PostDTO.class))).willReturn(updatedPostDTO);
+    }
 
     @Test
     public void shouldCreatePost() throws Exception {
@@ -96,5 +102,17 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].title").value(existingPostDTO.getTitle()))
                 .andExpect(jsonPath("$[0].description").value(existingPostDTO.getDescription()));
+    }
+
+    @Test
+    public void shouldUpdatePost() throws Exception {
+        String updatedPostJson = "{\"title\":\"Updated Title\",\"description\":\"Updated Description\"}";
+
+        mockMvc.perform(put("/posts/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updatedPostJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Updated Title"))
+                .andExpect(jsonPath("$.description").value("Updated Description"));
     }
 }
