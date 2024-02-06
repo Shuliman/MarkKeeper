@@ -14,6 +14,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -75,5 +80,21 @@ public class PostControllerTest {
         mockMvc.perform(get("/posts/{id}", existingPost.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(existingPost.getTitle()));
+    }
+
+    @Test
+    public void shouldGetPostsByCurrentUser() throws Exception {
+        // Preparing: creating of list PostDTO
+        List<PostDTO> postDTOList = Collections.singletonList(existingPostDTO);
+
+        // Mocking the service behavior to return the list of posts
+        given(postService.getPostsByCurrentUser()).willReturn(postDTOList);
+
+        mockMvc.perform(get("/posts")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].title").value(existingPostDTO.getTitle()))
+                .andExpect(jsonPath("$[0].description").value(existingPostDTO.getDescription()));
     }
 }
