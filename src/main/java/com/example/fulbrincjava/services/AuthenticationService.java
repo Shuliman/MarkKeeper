@@ -1,7 +1,6 @@
 package com.example.fulbrincjava.services;
 
-import com.example.fulbrincjava.dtos.LoginUserDto;
-import com.example.fulbrincjava.dtos.RegisterUserDto;
+import com.example.fulbrincjava.dtos.UserDto;
 import com.example.fulbrincjava.entities.User;
 import com.example.fulbrincjava.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +27,7 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User signup(RegisterUserDto input) {
+    public User signup(UserDto input) {
         var user = new User()
                 .setLogin(input.getLogin())
                 .setEmail(input.getEmail())
@@ -37,7 +36,7 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
-    public User authenticate(LoginUserDto input) {
+    public User authenticate(UserDto input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.getEmail(),

@@ -1,8 +1,7 @@
 package com.example.fulbrincjava.controllers;
 
 import com.example.fulbrincjava.entities.User;
-import com.example.fulbrincjava.dtos.LoginUserDto;
-import com.example.fulbrincjava.dtos.RegisterUserDto;
+import com.example.fulbrincjava.dtos.UserDto;
 import com.example.fulbrincjava.responses.LoginResponse;
 import com.example.fulbrincjava.services.AuthenticationService;
 import com.example.fulbrincjava.services.JwtService;
@@ -25,15 +24,15 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
-        User registeredUser = authenticationService.signup(registerUserDto);
+    public ResponseEntity<User> register(@RequestBody UserDto userDto) {
+        User registeredUser = authenticationService.signup(userDto);
 
         return ResponseEntity.ok(registeredUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
-        User authenticatedUser = authenticationService.authenticate(loginUserDto);
+    public ResponseEntity<LoginResponse> authenticate(@RequestBody UserDto userDto) {
+        User authenticatedUser = authenticationService.authenticate(userDto);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
