@@ -1,5 +1,6 @@
 package com.example.fulbrincjava.configs;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -13,13 +14,30 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
+
+    @Value("${cors.allowed-methods}")
+    private String allowedMethods;
+
+    @Value("${cors.allowed-headers}")
+    private String allowedHeaders;
+
+    @Value("${cors.exposed-headers}")
+    private String exposedHeaders;
+
+    @Value("${cors.max-age}")
+    private long maxAge;
 
     public SecurityConfiguration(
             JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -48,13 +66,19 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:8080"));
-        configuration.setAllowedMethods(List.of("GET","POST"));
-        configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
+        List<String> allowedOriginsList = Arrays.asList(allowedOrigins.split(","));
+        List<String> allowedMethodsList = Arrays.asList(allowedMethods.split(","));
+        List<String> allowedHeadersList = Arrays.asList(allowedHeaders.split(","));
+        List<String> exposedHeadersList = Arrays.asList(exposedHeaders.split(","));
+
+        configuration.setAllowedOrigins(allowedOriginsList);
+        configuration.setAllowedMethods(allowedMethodsList);
+        configuration.setAllowedHeaders(allowedHeadersList);
+        configuration.setExposedHeaders(exposedHeadersList);
+        configuration.setMaxAge(maxAge);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration("/**",configuration);
+        source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }
