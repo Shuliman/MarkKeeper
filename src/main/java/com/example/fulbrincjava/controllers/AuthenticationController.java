@@ -2,6 +2,7 @@ package com.example.fulbrincjava.controllers;
 
 import com.example.fulbrincjava.entities.User;
 import com.example.fulbrincjava.dtos.UserDto;
+import com.example.fulbrincjava.exceptions.UserAlreadyExists;
 import com.example.fulbrincjava.responses.LoginResponse;
 import com.example.fulbrincjava.services.AuthenticationService;
 import com.example.fulbrincjava.services.JwtService;
@@ -24,7 +25,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody UserDto userDto) {
+    public ResponseEntity<User> register(@RequestBody UserDto userDto) throws UserAlreadyExists {
         User registeredUser = authenticationService.signup(userDto);
 
         return ResponseEntity.ok(registeredUser);
