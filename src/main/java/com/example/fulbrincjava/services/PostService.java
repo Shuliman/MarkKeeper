@@ -7,7 +7,6 @@ import com.example.fulbrincjava.exceptions.PostNotFoundException;
 import com.example.fulbrincjava.exceptions.UserNotFoundException;
 import com.example.fulbrincjava.mappers.PostMapper;
 import com.example.fulbrincjava.repositories.PostRepository;
-import com.example.fulbrincjava.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,7 @@ public class PostService {
     private final PostMapper postMapper;
 
     @Autowired
-    public PostService(PostRepository postRepository, UserService userService, UserRepository userRepository, PostMapper postMapper) {
+    public PostService(PostRepository postRepository, UserService userService, PostMapper postMapper) {
         this.postRepository = postRepository;
         this.userService = userService;
         this.postMapper = postMapper;
