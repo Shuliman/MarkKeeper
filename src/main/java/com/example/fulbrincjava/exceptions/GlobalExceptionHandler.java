@@ -40,6 +40,13 @@ public class GlobalExceptionHandler {
         errorDetail.setProperty("description", "The JWT token has expired");
         return new ResponseEntity<>(errorDetail, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(UserAlreadyExists.class)
+    public ResponseEntity<ProblemDetail> handleUserAlreadyExists(UserAlreadyExists exception) {
+        ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
+        errorDetail.setProperty("description", "This email already registered");
+        return new ResponseEntity<>(errorDetail, HttpStatus.UNAUTHORIZED);
+    }
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ProblemDetail> handleUsernameNotFoundException(UsernameNotFoundException exception) {
         ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(404), exception.getMessage());

@@ -1,6 +1,6 @@
 package com.example.fulbrincjava.exceptions;
 
-public class UserAlreadyExists extends Throwable {
+public class UserAlreadyExists extends RuntimeException {
     public UserAlreadyExists(String message) {
         super(message);
     }
