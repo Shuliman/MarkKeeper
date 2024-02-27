@@ -1,6 +1,10 @@
 package com.example.fulbrincjava.services;
 
+import com.example.fulbrincjava.dtos.PostDTO;
+import com.example.fulbrincjava.entities.Post;
 import com.example.fulbrincjava.entities.User;
+import com.example.fulbrincjava.exceptions.PostNotFoundException;
+import com.example.fulbrincjava.exceptions.UserNotFoundException;
 import com.example.fulbrincjava.repositories.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,4 +34,10 @@ public class UserService {
         String currentUserName = authentication.getName();
         return userRepository.findByEmail(currentUserName);
     }
+
+    public User getUserById(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
+    }
+
 }
