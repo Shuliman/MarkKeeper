@@ -1,15 +1,6 @@
 package com.example.fulbrincjava.controllers;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-
-import com.example.fulbrincjava.controllers.UserController;
+import com.example.fulbrincjava.configs.JwtAuthenticationFilter;
 import com.example.fulbrincjava.entities.User;
 import com.example.fulbrincjava.repositories.UserRepository;
 import com.example.fulbrincjava.services.JwtService;
@@ -17,25 +8,33 @@ import com.example.fulbrincjava.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
+@ContextConfiguration(classes = {JwtService.class, JwtAuthenticationFilter.class, UserController.class})
+
 public class UserControllerTest {
 
     @Autowired
@@ -45,8 +44,11 @@ public class UserControllerTest {
     private UserService userService;
     @MockBean
     UserRepository userRepository;
-    @MockBean
+    @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private Environment environment;
 
     private User existingUser;
 
@@ -87,6 +89,9 @@ public class UserControllerTest {
 
     @Test
     public void shouldGetAllUsers() throws Exception {
+        // Mocking userService.getAllUsers() to return a list containing existingUser
+        given(userService.allUsers()).willReturn(Collections.singletonList(existingUser));
+
         mockMvc.perform(get("/users")
                         .header("Authorization", "Bearer " + token)
                         .accept(MediaType.APPLICATION_JSON))
