@@ -4,6 +4,7 @@ import com.example.fulbrincjava.entities.User;
 import com.example.fulbrincjava.exceptions.UserNotFoundException;
 import com.example.fulbrincjava.services.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public ResponseEntity<List<User>> allUsers() {
         List <User> users = userService.allUsers();
 
@@ -40,6 +42,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public ResponseEntity<User> userById(@PathVariable Integer id) {
         User user = userService.getUserById(id);
 
